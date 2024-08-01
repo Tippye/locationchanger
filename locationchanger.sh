@@ -24,7 +24,7 @@ ts() {
 ID=`whoami`
 ts "I am '$ID'"
 
-SSID=`/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I | grep ' SSID' | cut -d : -f 2- | sed 's/^[ ]*//'`
+SSID=$(networksetup -getairportnetwork en0 | sed 's/^Current Wi-Fi Network: //')
 
 LOCATION_NAMES=`scselect | tail -n +2 | cut -d \( -f 2- | sed 's/)$//'`
 CURRENT_LOCATION=`scselect | tail -n +2 | egrep '^\ +\*' | cut -d \( -f 2- | sed 's/)$//'`
@@ -62,7 +62,7 @@ fi
 if [ "$NEW_LOCATION" != "" ]; then
     if [ "$NEW_LOCATION" != "$CURRENT_LOCATION" ]; then
         ts "Changing the location to '$NEW_LOCATION'"
-        scselect "$NEW_LOCATION"
+        networksetup -switchtolocation  "$NEW_LOCATION"
         SCRIPT="$HOME/.locations/$NEW_LOCATION"
         if [ -f "$SCRIPT" ]; then
             ts "Running '$SCRIPT'"
